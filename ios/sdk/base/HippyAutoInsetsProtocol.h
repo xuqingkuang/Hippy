@@ -17,6 +17,7 @@
 @property (nonatomic, assign, readwrite) UIEdgeInsets contentInset;
 @property (nonatomic, assign, readwrite) BOOL automaticallyAdjustContentInsets;
 
+
 /**
  * Automatically adjusted content inset depends on view controller's top and bottom
  * layout guides so if you've changed one of them (e.g. after rotation or manually) you should call this method
