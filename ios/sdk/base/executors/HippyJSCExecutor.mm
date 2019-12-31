@@ -1,10 +1,23 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
+/*!
+ * iOS SDK
+ *
+ * Tencent is pleased to support the open source community by making
+ * Hippy available.
+ *
+ * Copyright (C) 2019 THL A29 Limited, a Tencent company.
  * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "HippyJSCExecutor.h"
@@ -139,15 +152,7 @@ HIPPY_NOT_IMPLEMENTED(-(instancetype)init)
 @synthesize pEnv = _pEnv;
 @synthesize napi_ctx = _napi_ctx;
 @synthesize JSGlobalContextRef = _JSGlobalContextRef;
-@synthesize businessName = _businessName;
 HIPPY_EXPORT_MODULE()
-- (void) setBusinessName:(NSString *)businessName {
-    _businessName = businessName;
-    if (nil == [self contextName] && businessName) {
-        [self setContextName:[NSString stringWithFormat:@"HippyJSContext(%@)", businessName]];
-    }
-}
-
 - (void)setBridge:(HippyBridge *)bridge
 {
     _bridge = bridge;
@@ -182,7 +187,9 @@ HIPPY_EXPORT_MODULE()
     __weak typeof(self) weakSelf = self;
     hippy::base::RegisterFunction function = [weakSelf](void *){
         typeof(self) strongSelf = weakSelf;
-        [strongSelf->_bridge handleBuffer:nil batchEnded:YES];
+        if (strongSelf) {
+            [strongSelf->_bridge handleBuffer:nil batchEnded:YES];
+        }
     };
     std::unique_ptr<Engine::RegisterMap> ptr(new Engine::RegisterMap());
     ptr->insert(std::make_pair("ASYNC_TASK_END", function));
@@ -215,9 +222,6 @@ HIPPY_EXPORT_MODULE()
         self->_pEngine = data.weak_engine_;
         _jscWrapper = data.jscWrapper;
         _context = [[HippyJavaScriptContext alloc] initWithJSContext:data.context onThread:self->_pEngine];
-        if (_businessName) {
-            [self setContextName:[NSString stringWithFormat:@"HippyJSContext(%@)", _businessName]];
-        }
     }
     return self;
 }
@@ -278,9 +282,6 @@ HIPPY_EXPORT_MODULE()
             context = js_context;
             self->_JSGlobalContextRef = context.JSGlobalContextRef;
             self->_context = [[HippyJavaScriptContext alloc] initWithJSContext:context onThread:self->_pEngine];
-            if (self.businessName) {
-                [self setContextName:[NSString stringWithFormat:@"HippyJSContext(%@)", self.businessName]];
-            }
             [[NSNotificationCenter defaultCenter] postNotificationName:HippyJavaScriptContextCreatedNotification
                                                                 object:context];
             

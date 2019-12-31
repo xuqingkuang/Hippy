@@ -10,20 +10,27 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: wagoid/commitlint-github-action@v1
+        with:
+          configFile: .commitlintrc.js
   build:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      matrix:
+        node: [ '10', '12' ]
     steps:
       - uses: actions/checkout@v1
       - name: setup-node
         uses: actions/setup-node@master
         with:
-          node-version: 10.x
+          node-version: ${{ matrix.node }}
       - name: install
         run: npm install
       - name: lint
         run: npm run lint
+      - name: markdownlint
+        run: npm run markdownlint
       - name: test
         run: npm run test
       - name: build

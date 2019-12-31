@@ -1,10 +1,23 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
+/*!
+ * iOS SDK
+ *
+ * Tencent is pleased to support the open source community by making
+ * Hippy available.
+ *
+ * Copyright (C) 2019 THL A29 Limited, a Tencent company.
  * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import <UIKit/UIKit.h>
@@ -54,7 +67,7 @@ HIPPY_EXTERN NSString *const HippyJavaScriptDidFailToLoadNotification;
  */
 HIPPY_EXTERN NSString *const HippyDidInitializeModuleNotification;
 
-// MttRN: 业务代码已经成功加载的通知
+
 HIPPY_EXTERN NSString *const HippyBusinessDidLoadNotification;
 
 /**
@@ -224,16 +237,12 @@ HIPPY_EXTERN NSString *HippyBridgeModuleNameForClass(Class bridgeModuleClass);
  */
 - (BOOL)isBatchActive;
 
-// MttRN: 表示这个bridge是否使用了分包加载
 @property (nonatomic, assign) BOOL useCommonBridge;
 
-// MttRN: 表示是否是Debug模式
 @property (nonatomic, assign) BOOL debugMode;
 
-// MttRN: 共享数据通道
 @property (nonatomic, strong) NSMutableDictionary *shareOptions;
 
-// MttRN: bridge业务名, todo:单引擎的时候此值无效，多引擎的时候有效，目前为多引擎；
 @property (nonatomic, strong) NSString *moduleName;
 
 @property (nonatomic, strong) NSString *appVerson;//宿主App的版本号

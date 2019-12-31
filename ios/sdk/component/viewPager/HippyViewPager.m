@@ -1,10 +1,27 @@
-//
-// Created by 万致远 on 2018/11/21.
-// Copyright (c) 2018 Tencent. All rights reserved.
-//
+/*!
+* iOS SDK
+*
+* Tencent is pleased to support the open source community by making
+* Hippy available.
+*
+* Copyright (C) 2019 THL A29 Limited, a Tencent company.
+* All rights reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #import "HippyViewPager.h"
-#import "UIView+React.h"
+#import "UIView+Hippy.h"
 #import "HippyLog.h"
 
 #define MTT_FORWARD_SCROLL_EVENT(call) \
@@ -82,7 +99,7 @@ if ([scrollViewListener respondsToSelector:_cmd]) { \
 
 - (void)didUpdateHippySubviews {
     [super didUpdateHippySubviews];
-    [self refreshViewPager:NO];
+    [self refreshViewPager:NO invokeOnPageSelectd:NO];
 }
 
 - (void)invalidate {
@@ -251,11 +268,11 @@ if ([scrollViewListener respondsToSelector:_cmd]) { \
     if (!isContentSizeEqual || !isFrameEqual) {
         self.previousFrame = self.frame;
         self.previousSize = self.contentSize;
-        [self refreshViewPager:YES];
+        [self refreshViewPager:YES invokeOnPageSelectd:YES];
     }
 }
 
-- (void)refreshViewPager:(BOOL)needResetToInitialPage {
+- (void)refreshViewPager:(BOOL)needResetToInitialPage invokeOnPageSelectd:(BOOL)invokeOnPageSelectd{
     if (!self.viewPagerItems.count) return;
     for (int i = 1; i < self.viewPagerItems.count; ++i) {
         UIView *lastViewPagerItem = self.viewPagerItems[i - 1];
@@ -297,17 +314,17 @@ if ([scrollViewListener respondsToSelector:_cmd]) { \
         return;
     }
     
-    if (self.onPageSelected && NO == CGSizeEqualToSize(CGSizeZero, self.contentSize)) {
+    self.contentSize = CGSizeMake(
+            lastViewPagerItem.frame.origin.x + lastViewPagerItem.frame.size.width,
+            lastViewPagerItem.frame.origin.y + lastViewPagerItem.frame.size.height);
+
+    if (self.onPageSelected && NO == CGSizeEqualToSize(CGSizeZero, self.contentSize) && invokeOnPageSelectd) {
         NSUInteger currentPageIndex = self.contentOffset.x / CGRectGetWidth(self.bounds);
         if (currentPageIndex != _lastPageIndex) {
             _lastPageIndex = currentPageIndex;
             self.onPageSelected(@{@"position": @(currentPageIndex)});
         }
     }
-
-    self.contentSize = CGSizeMake(
-            lastViewPagerItem.frame.origin.x + lastViewPagerItem.frame.size.width,
-            lastViewPagerItem.frame.origin.y + lastViewPagerItem.frame.size.height);
 }
 
 - (NSUInteger)nowPage {

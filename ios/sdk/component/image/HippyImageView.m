@@ -1,15 +1,29 @@
-//
-//  HippyImageViewV2.m
-//  QBCommonRNLib
-//
-//  Created by pennyli on 2018/8/21.
-//  Copyright © 2018年 Tencent. All rights reserved.
-//
+/*!
+* iOS SDK
+*
+* Tencent is pleased to support the open source community by making
+* Hippy available.
+*
+* Copyright (C) 2019 THL A29 Limited, a Tencent company.
+* All rights reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #import "HippyImageView.h"
 #import <objc/runtime.h>
 #import "HippyUtils.h"
-#import "UIView+React.h"
+#import "UIView+Hippy.h"
 #import "HippyImageViewCustomLoader.h"
 #import "HippyBridge+LocalFileSource.h"
 #import "HippyImageCacheManager.h"
@@ -204,7 +218,6 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
 
 - (void) setFrame:(CGRect)frame {
     [super setFrame:frame];
-    //display:none属性下，frame会置为0，导致ImageView不会加载图片
     if (nil == self.image) {
         [self reloadImage];
     }
@@ -246,7 +259,6 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
             [self loadImage:image url:uri error:nil needBlur:!isBlurredImage needCache:NO];
             return;
         }
-        //直接使用[NSURL URLWithString:]无法将带有特殊符号的字符串转化为URL
         NSData *uriData = [uri dataUsingEncoding:NSUTF8StringEncoding];
         if (nil == uriData) {
             return;
@@ -279,7 +291,6 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
             return;
         }
 		__weak typeof(self) weakSelf = self;
-        //对于data:image/类型的uri并不能生成一个对应的NSURL属性
 		if(_bridge.imageLoader && source_url) {
             if (_defaultImage) {
                 weakSelf.image = _defaultImage;
@@ -331,9 +342,6 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
                 if (_task) {
                     [self cancelImageLoad];
                 }
-                //这里使用defaultSessionConfiguration会导致crash
-                //初步判断是系统URLResponse中的某个CFString over-release导致。
-                //为了避免崩溃使用ephemeralSessionConfiguration，代价是无法使用cache
                 NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
                 NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration delegate: self delegateQueue:hippy_image_queue()];
                 _task = [session dataTaskWithURL:source_url];
@@ -353,7 +361,6 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
 	} else {
 		[_task cancel];
 		_task = nil;
-        //_data进行多线程操作导致不安全，需要将_data的操作放在同一个串行队列中
         [hippy_image_queue() addOperationWithBlock:^{
             self->_data = nil;
             self->_totalLength = 0;
@@ -377,7 +384,7 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
     if (imageSourceRef) {
         size_t imageCount = CGImageSourceGetCount(imageSourceRef);
         CFRelease(imageSourceRef);
-        HippyAssert(imageCount < 2, @"GIF图片不应该走这个逻辑");
+        HippyAssert(imageCount < 2, @"not for GIF image");
     }
 #endif
     return [UIImage imageWithData:data];
@@ -420,7 +427,6 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
             else {
                 [[HippyImageCacheManager sharedInstance] setImageCacheData:_data forURLString:source[@"uri"]];
                 UIImage *image = [self imageFromData:_data];;
-                //这里可能会转换失败，要抛出错误
                 if (image) {
                     [self loadImage: image url:source[@"uri"] error:nil needBlur:YES needCache:YES];
                 } else {
@@ -465,7 +471,6 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
 			weakSelf.onLoadEnd(nil);
 	};
     
-    //1GB内存手机 限制模糊半径，粗略规避下内存问题
     if (_blurRadius > 100 && [NSProcessInfo processInfo].physicalMemory <= 1024 * 1024 * 1000) {
         _blurRadius = 100;
     }
@@ -593,6 +598,9 @@ UIImage *HippyBlurredImageWithRadiusv(UIImage *inputImage, CGFloat radius)
         borderLayer.frame = contentRect;
         _borderWidthLayer = borderLayer;
         [self.layer addSublayer:borderLayer];
+    }
+    else {
+        self.layer.mask = nil;
     }
 }
 
