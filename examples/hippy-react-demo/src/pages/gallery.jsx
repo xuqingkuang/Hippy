@@ -8,14 +8,18 @@ import {
   Text,
   View,
 } from 'hippy-react';
-import * as components from '../components';
+// import * as components from '../components';
+import RadiusBenchmark from '../components/RadiusBenchmark';
 import * as modules from '../modules';
 import * as externals from '../externals';
 
 import BACK_ICON from './back-icon.png';
 
 const PAGE_LIST = {
-  ...components,
+  rectangle4: RadiusBenchmark('rectangle', 4),
+  rectangle10: RadiusBenchmark('rectangle', 10),
+  roundRectangle4: RadiusBenchmark('roundRectangle', 4),
+  roundRectangle10: RadiusBenchmark('roundRectangle', 10),
   ...modules,
   ...externals,
 };
@@ -78,6 +82,7 @@ export default class Gallery extends Component {
       page: 'Home',
       // TODO: Make the demo detail be in the demo folder.
       dataSource: [
+        /*
         {
           id: 'View',
           name: 'View 组件',
@@ -156,6 +161,27 @@ export default class Gallery extends Component {
         {
           id: 'NetInfo',
           name: 'NetInfo 能力',
+          style: 2,
+        },
+        */
+        {
+          id: 'rectangle4',
+          name: '1000无圆角方形（4个）',
+          style: 1,
+        },
+        {
+          id: 'roundRectangle4',
+          name: '1000圆角方形（4个）',
+          style: 2,
+        },
+        {
+          id: 'rectangle10',
+          name: '1000无圆角方形（10个）',
+          style: 1,
+        },
+        {
+          id: 'roundRectangle10',
+          name: '1000圆角方形（10个）',
           style: 2,
         },
       ],
