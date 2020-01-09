@@ -79,6 +79,11 @@ export default class Gallery extends Component {
       // TODO: Make the demo detail be in the demo folder.
       dataSource: [
         {
+          id: 'FunctionalChildren',
+          name: '函数子组件',
+          style: 1,
+        },
+        {
           id: 'View',
           name: 'View 组件',
           style: 1,

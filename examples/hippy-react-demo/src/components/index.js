@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
+export { default as FunctionalChildren } from './FunctionalChildren';
 export { default as Focusable } from './Focusable';
 export { default as Image } from './Image';
 export { default as ListView } from './ListView';
