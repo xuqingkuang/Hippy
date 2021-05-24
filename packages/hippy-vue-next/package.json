@@ -1,0 +1,43 @@
+{
+  "name": "@hippy/vue-next",
+  "version": "2.7.0",
+  "description": "Vue 3 binding for Hippy native framework",
+  "keywords": [
+    "vue-next",
+    "vue",
+    "3",
+    "hippy",
+    "hippy-vue",
+    "native",
+    "web",
+    "framework",
+    "compiler"
+  ],
+  "author": "XQ Kuang <x@kxq.io>",
+  "homepage": "https://github.com/Tencent/Hippy/tree/master/packages/hippy-vue-next",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xuqingkuang/Hippy.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/xuqingkuang/Hippy/issues"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "vue": "^3.0.11"
+  }
+}
